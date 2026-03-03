@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.devansh.journal_app.entity.JournalEntry;
+import com.devansh.journal_app.entity.UserEntity;
 import com.devansh.journal_app.repository.JouralEntryRepository;
 
 @Component
@@ -18,6 +19,9 @@ public class JouralEntryService {
     
     @Autowired
     private JouralEntryRepository journalEntryRepository;
+
+    @Autowired
+    private UserService userService;
 
     // GET - Retrieve all data
     public List<JournalEntry> fetchEntries(){
@@ -30,9 +34,14 @@ public class JouralEntryService {
     }
 
     // POST - Creating Entry
-    public void saveEntry(JournalEntry journalEntry){
+    public void saveEntry(JournalEntry journalEntry, String userName){
         try {
+            // fetching user (from username) -> saving jounralEntry into DB & saving that journalEntry into journalEntries field of User table
+            UserEntity user = userService.findByUserName(userName);
             journalEntry.setDate(LocalDateTime.now());
+            JournalEntry saved = journalEntryRepository.save(journalEntry);
+            user.getJournalEntries().add(saved);
+            userService.saveUser(user);
         } catch (Exception e) {
             System.out.println("Error: "+e);
         }
