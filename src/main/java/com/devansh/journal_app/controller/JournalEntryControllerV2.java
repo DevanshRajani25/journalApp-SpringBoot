@@ -1,5 +1,4 @@
 package com.devansh.journal_app.controller;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -64,24 +63,28 @@ public class JournalEntryControllerV2 {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @DeleteMapping("/id/{deleteId}")
-    public ResponseEntity<?> deleteJournalbyId(@PathVariable ObjectId deleteId){
-        journalEntryService.deletebyId(deleteId);
+    @DeleteMapping("id/{userName}/{deleteId}")
+    public ResponseEntity<?> deleteJournalbyId(@PathVariable ObjectId deleteId, @PathVariable String userName){
+        journalEntryService.deletebyId(deleteId, userName);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
     
-    @PutMapping("/id/{updateId}")
-    public ResponseEntity<?> updateJournalbyId(@PathVariable ObjectId updateId, @RequestBody JournalEntry updatedEntry){
+    @PutMapping("id/{userName}/{updateId}")
+    public ResponseEntity<?> updateJournalbyId(
+        @PathVariable ObjectId updateId, 
+        @RequestBody JournalEntry updatedEntry,
+        @PathVariable String userName
+    ){
 
-        // JournalEntry oldEntry = journalEntryService.fetchJournalbyId(updateId).orElse(null);
+        JournalEntry oldEntry = journalEntryService.fetchJournalbyId(updateId).orElse(null);
 
-        // // If updatedEntry already existing --> we have to update it
-        // if(oldEntry != null){
-        //     oldEntry.setTitle(updatedEntry.getTitle() != null && !updatedEntry.getTitle().equals("") ? updatedEntry.getTitle() : oldEntry.getTitle());
-        //     oldEntry.setContent(updatedEntry.getContent() != null && !updatedEntry.getContent().equals("") ? updatedEntry.getContent() : oldEntry.getContent());
-        //     journalEntryService.saveEntry(oldEntry);
-        //     return new ResponseEntity<>(updatedEntry, HttpStatus.OK);
-        // }
+        // If updatedEntry already existing --> we have to update it
+        if(oldEntry != null){
+            oldEntry.setTitle(updatedEntry.getTitle() != null && !updatedEntry.getTitle().equals("") ? updatedEntry.getTitle() : oldEntry.getTitle());
+            oldEntry.setContent(updatedEntry.getContent() != null && !updatedEntry.getContent().equals("") ? updatedEntry.getContent() : oldEntry.getContent());
+            journalEntryService.updateEntry(oldEntry);
+            return new ResponseEntity<>(updatedEntry, HttpStatus.OK);
+        }
 
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }

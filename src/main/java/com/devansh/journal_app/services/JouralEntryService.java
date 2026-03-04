@@ -48,12 +48,15 @@ public class JouralEntryService {
     }
 
     // PUT - Update Entry
-    // public void updatebyId(ObjectId updateId){
-    //     // return journalEntryRepository.
-    // }
+    public void updateEntry(JournalEntry journalEntry){
+        journalEntryRepository.save(journalEntry);
+    }
 
     // DELETE - Delete entry by ID
-    public void deletebyId(ObjectId deleteId){
+    public void deletebyId(ObjectId deleteId, String userName){
+        UserEntity user = userService.findByUserName(userName);
+        user.getJournalEntries().removeIf(x -> x.getId().equals(deleteId));
+        userService.saveUser(user);
         journalEntryRepository.deleteById(deleteId);
     }
 
