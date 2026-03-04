@@ -38,7 +38,7 @@ public class JournalEntryControllerV2 {
         if(alldata != null && !alldata.isEmpty()){
             return new ResponseEntity<>(alldata, HttpStatus.OK);
         }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>("No any entries found for this user!",HttpStatus.NOT_FOUND);
     }
 
     @PostMapping("{userName}")
@@ -65,8 +65,13 @@ public class JournalEntryControllerV2 {
 
     @DeleteMapping("id/{userName}/{deleteId}")
     public ResponseEntity<?> deleteJournalbyId(@PathVariable ObjectId deleteId, @PathVariable String userName){
-        journalEntryService.deletebyId(deleteId, userName);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        boolean delete_success = journalEntryService.deletebyId(deleteId, userName);
+        if(delete_success){
+            return new ResponseEntity<>("Entry deleted Successfully!",HttpStatus.NO_CONTENT);
+        }
+        else{
+            return new ResponseEntity<>("No Journal entry found for this user!", HttpStatus.NOT_FOUND);
+        }
     }
     
     @PutMapping("id/{userName}/{updateId}")
@@ -85,7 +90,6 @@ public class JournalEntryControllerV2 {
             journalEntryService.updateEntry(oldEntry);
             return new ResponseEntity<>(updatedEntry, HttpStatus.OK);
         }
-
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>("No ID found to update for the user!",HttpStatus.NOT_FOUND);
     }
 }
