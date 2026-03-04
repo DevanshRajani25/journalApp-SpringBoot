@@ -53,11 +53,17 @@ public class JouralEntryService {
     }
 
     // DELETE - Delete entry by ID
-    public void deletebyId(ObjectId deleteId, String userName){
+    public boolean deletebyId(ObjectId deleteId, String userName){
         UserEntity user = userService.findByUserName(userName);
-        user.getJournalEntries().removeIf(x -> x.getId().equals(deleteId));
-        userService.saveUser(user);
-        journalEntryRepository.deleteById(deleteId);
+        if(user!=null){
+            user.getJournalEntries().removeIf(x -> x.getId().equals(deleteId));
+            userService.saveUser(user);
+            journalEntryRepository.deleteById(deleteId);
+            return true;
+        }
+        else{
+            return false;
+        }
     }
 
 }
