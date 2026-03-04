@@ -9,6 +9,7 @@ import java.util.Optional;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.devansh.journal_app.entity.JournalEntry;
 import com.devansh.journal_app.entity.UserEntity;
@@ -34,6 +35,7 @@ public class JouralEntryService {
     }
 
     // POST - Creating Entry
+    @Transactional  // execute block of code as a single operation -> If all successful then commit, else rollback
     public void saveEntry(JournalEntry journalEntry, String userName){
         try {
             // fetching user (from username) -> saving jounralEntry into DB & saving that journalEntry into journalEntries field of User table
